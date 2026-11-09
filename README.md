@@ -1,0 +1,60 @@
+# CodeAlpha Credit Scoring Model
+
+A beginner-friendly Streamlit machine-learning project comparing Logistic Regression, Decision Tree, and Random Forest.
+
+## Important dataset note
+`credit_data.csv` is a **synthetic teaching dataset generated for this project**. It is not real credit bureau data and must not be used to make real lending or credit decisions. Metrics describe performance on this synthetic dataset only and do not indicate real-world lending accuracy.
+
+## Features
+- Streamlit dashboard with separate tabs
+- Creditworthiness prediction form
+- Three classification models
+- Accuracy, precision, recall, F1-score, and ROC-AUC
+- Confusion matrix visualizations
+- ROC curve comparison
+- Permutation feature importance
+- Financial feature engineering: debt-to-annual-income ratio derived from total debt and annual income
+- Dataset preview and CSV download
+- Prediction audit log with UTC timestamps, unique event IDs, selected model, result, probability, and all-model outputs
+
+## Requirements
+- Python 3.10+ recommended
+- VS Code (optional; any editor can run it)
+
+## Run on Windows
+Open a terminal in this folder.
+
+```powershell
+python -m pip install -r requirements.txt
+python train_model.py
+python -m streamlit run app.py
+```
+
+Open the Local URL shown in the terminal, usually `http://localhost:8501`.
+
+## Files
+- `app.py`: Streamlit interface and visualizations
+- `train_model.py`: feature engineering, preprocessing, train/test split, model training, metrics, and saving models
+- `feature_engineering.py`: shared derived-feature logic used by training and prediction
+- `audit_logger.py`: appends privacy-conscious prediction activity records
+- `credit_data.csv`: synthetic teaching dataset
+- `requirements.txt`: Python dependencies
+- `models/`: generated after running `train_model.py`
+
+## Training and evaluation
+- Stratified 75/25 train/test split
+- Numeric missing-value imputation and standardization
+- One-hot encoding of payment history
+- Derived feature: `debt_to_annual_income_ratio = total_debt / annual_income` (zero or missing income is handled as a missing value and imputed by the numeric pipeline). This is a debt-balance-to-annual-income proxy, not the conventional debt-to-income ratio based on monthly debt payments and gross monthly income.
+- Preprocessing is fitted within each model pipeline on training data
+- Evaluation metrics are calculated on the held-out test set
+- Random states are fixed for reproducibility
+
+## Prediction audit log
+- The first prediction creates `logs/audit_log.csv`; later predictions append new rows.
+- Each row stores a UTC timestamp, unique prediction ID, selected model, predicted label, estimated probability, and outputs from all three models.
+- Applicant names and raw financial input values are deliberately not stored.
+- The `logs/` directory is excluded from Git by `.gitignore`, so local prediction history is not uploaded with the source project.
+
+## Limitations
+The target label is generated from a synthetic rule and random noise. The dataset is for software demonstration and learning only, not a validated credit-risk model.
